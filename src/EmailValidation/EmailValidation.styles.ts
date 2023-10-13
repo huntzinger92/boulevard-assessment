@@ -9,7 +9,13 @@ export const historyContainer = {
     padding: '10px',
 };
 
-export const historyData = { display: 'flex', flexDirection: 'row', gap: '15px', alignItems: 'center' };
+export const historyData = {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: '15px',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+};
 
 export const validationFormWrapper = {
     display: 'flex',
