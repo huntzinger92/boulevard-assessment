@@ -1,7 +1,27 @@
-import { Button, FormControl, Input, InputLabel, useMediaQuery, useTheme } from '@mui/material';
-import { IFormattedValidationResult } from './types';
+import {
+    Alert,
+    Box,
+    Button,
+    CircularProgress,
+    FormControl,
+    Input,
+    InputLabel,
+    useMediaQuery,
+    useTheme,
+} from '@mui/material';
+import { IEmailValidationResult, IFormattedValidationResult } from './types';
 import { ChangeEvent, FormEvent, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import * as styles from './EmailValidation.styles';
+import axios from 'axios';
+
+const fetchValidation = async (email: string, onSuccessCallback: (newResult: IEmailValidationResult) => void) => {
+    const baseUrl = 'https://www.disify.com/api/email';
+    const url = `${baseUrl}/${email}`;
+    const result = await axios.get<IEmailValidationResult>(url);
+    onSuccessCallback(result.data);
+    return result.data;
+};
 
 export interface IValidationFormProps {
     addQueryResultToHistory: (newResult: IFormattedValidationResult) => void;
@@ -15,6 +35,30 @@ export const ValidationForm = ({ addQueryResultToHistory }: IValidationFormProps
     const isAboveSmallScreen = useMediaQuery(theme.breakpoints.up('sm'));
 
     const [currentEmail, setCurrentEmail] = useState('');
+    const [submitClicked, setSubmitClicked] = useState(false);
+
+    /**
+     * passing this callback to the fetching function,
+     * as react-query's onCompleted callback is deprecated in favor of this pattern
+     */
+    const onSuccessCallback = (newResult: IEmailValidationResult) => {
+        // the api doesn't give us a unique key, so use current time for unique id
+        const uniqueKey = new Date().toISOString();
+        addQueryResultToHistory({
+            key: uniqueKey,
+            email: currentEmail,
+            ...newResult,
+        });
+        // reset form
+        setCurrentEmail('');
+        setSubmitClicked(false);
+    };
+
+    const { isFetching, error } = useQuery<IEmailValidationResult>({
+        queryKey: ['email-validation-query'],
+        queryFn: () => fetchValidation(currentEmail, onSuccessCallback),
+        enabled: submitClicked,
+    });
 
     const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
         setCurrentEmail(e.target.value);
@@ -23,36 +67,30 @@ export const ValidationForm = ({ addQueryResultToHistory }: IValidationFormProps
     const handleValidateEmailQuery = async (e: FormEvent) => {
         // this prevents page from reloading on form submit
         e.preventDefault();
-        // TO DO: do real query here, handle loading and error states
-        const uniqueKey = new Date().toISOString();
-        addQueryResultToHistory({
-            disposable: Math.random() < 0.5,
-            key: uniqueKey,
-            format: Math.random() < 0.5,
-            domain: 'some-domain',
-            dns: Math.random() < 0.5,
-            email: currentEmail,
-        });
-        setCurrentEmail('');
+        setSubmitClicked(true);
     };
 
     return (
-        <form
-            onSubmit={handleValidateEmailQuery}
-            style={isAboveSmallScreen ? styles.formContainer : styles.mobileFormContainer}
-        >
-            <FormControl sx={styles.formInput}>
-                <InputLabel htmlFor='email-input'>Email address</InputLabel>
-                <Input
-                    id='email-input'
-                    placeholder='validate_this_email@gmail.com'
-                    onChange={handleEmailChange}
-                    value={currentEmail}
-                />
-            </FormControl>
-            <Button type='submit' disabled={!currentEmail}>
-                Validate Email
-            </Button>
-        </form>
+        <Box sx={styles.validationFormWrapper}>
+            <form
+                onSubmit={handleValidateEmailQuery}
+                style={isAboveSmallScreen ? styles.formContainer : styles.mobileFormContainer}
+            >
+                <FormControl sx={styles.formInput}>
+                    <InputLabel htmlFor='email-input'>Email address</InputLabel>
+                    <Input
+                        id='email-input'
+                        placeholder='validate_this_email@gmail.com'
+                        onChange={handleEmailChange}
+                        value={currentEmail}
+                    />
+                </FormControl>
+                <Button type='submit' disabled={!currentEmail}>
+                    Validate Email
+                </Button>
+            </form>
+            {isFetching && <CircularProgress sx={styles.loadingSpinner} />}
+            {!!error && <Alert severity='error'>An error occurred while attempting to fetch email validation.</Alert>}
+        </Box>
     );
 };
