@@ -11,6 +11,12 @@ export const historyContainer = {
 
 export const historyData = { display: 'flex', flexDirection: 'row', gap: '15px', alignItems: 'center' };
 
+export const validationFormWrapper = {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '20px',
+};
+
 export const formContainer = {
     display: 'grid',
     gridTemplateColumns: '1fr 1fr',
@@ -31,3 +37,5 @@ export const formInput = {
 };
 
 export const emailValidationContainer = { marginTop: '50px', display: 'flex', flexDirection: 'column', gap: '15px' };
+
+export const loadingSpinner = { margin: 'auto' };

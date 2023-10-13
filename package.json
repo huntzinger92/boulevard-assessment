@@ -6,8 +6,10 @@
     "@emotion/react": "latest",
     "@emotion/styled": "latest",
     "@mui/material": "latest",
+    "@tanstack/react-query": "^4.36.1",
     "@types/react": "latest",
     "@types/react-dom": "latest",
+    "axios": "^1.5.1",
     "react": "latest",
     "react-dom": "latest",
     "react-scripts": "latest",
@@ -19,7 +21,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "prepare": "husky install",
-    "lint": "prettier -c"
+    "lint": "prettier --write --ignore-unknown"
   },
   "lint-staged": {
     "**/*.{ts,tsx}": "npm run lint"

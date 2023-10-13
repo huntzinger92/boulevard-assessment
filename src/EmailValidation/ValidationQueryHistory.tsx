@@ -38,7 +38,7 @@ export const ValidationQueryHistory = ({ queryHistory }: IValidationQueryHistory
     return (
         <Box>
             {queryHistory.length === 0 && <Alert severity='info'>No query history available.</Alert>}
-            {queryHistory.map(({ disposable, key, format, dns, domain, email }) => (
+            {queryHistory.map(({ disposable, key, format, dns, domain, email, whitelist }) => (
                 <Card key={key} sx={styles.historyContainer}>
                     <Typography>{`Email: ${email}`}</Typography>
                     <Box sx={styles.historyData}>
@@ -46,6 +46,7 @@ export const ValidationQueryHistory = ({ queryHistory }: IValidationQueryHistory
                         <ReadOnlyFormControlCheckbox label='Disposable' checked={disposable} />
                         <ReadOnlyFormControlCheckbox label='DNS' checked={dns} />
                         <ReadOnlyFormControlCheckbox label='Format' checked={format} />
+                        <ReadOnlyFormControlCheckbox label='Whitelist' checked={whitelist} />
                     </Box>
                 </Card>
             ))}
