@@ -1,9 +1,9 @@
 export type IEmailValidationResult = {
     format: boolean;
-    domain: string;
-    disposable: boolean;
-    dns: boolean;
-    whitelist: boolean;
+    domain?: string;
+    disposable?: boolean;
+    dns?: boolean;
+    whitelist?: boolean;
 };
 
 export interface IFormattedValidationResult extends IEmailValidationResult {
