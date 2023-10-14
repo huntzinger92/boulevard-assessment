@@ -42,11 +42,15 @@ export const ValidationQueryHistory = ({ queryHistory }: IValidationQueryHistory
                 <Card key={key} sx={styles.historyContainer}>
                     <Typography>{`Email: ${email}`}</Typography>
                     <Box sx={styles.historyData}>
-                        <Typography>{`Domain: ${domain}`}</Typography>
-                        <ReadOnlyFormControlCheckbox label='Disposable' checked={disposable} />
-                        <ReadOnlyFormControlCheckbox label='DNS' checked={dns} />
+                        {domain !== undefined && <Typography>{`Domain: ${domain}`}</Typography>}
+                        {disposable !== undefined && (
+                            <ReadOnlyFormControlCheckbox label='Disposable' checked={disposable} />
+                        )}
+                        {dns !== undefined && <ReadOnlyFormControlCheckbox label='DNS' checked={dns} />}
                         <ReadOnlyFormControlCheckbox label='Format' checked={format} />
-                        <ReadOnlyFormControlCheckbox label='Whitelist' checked={whitelist} />
+                        {whitelist !== undefined && (
+                            <ReadOnlyFormControlCheckbox label='Whitelist' checked={whitelist} />
+                        )}
                     </Box>
                 </Card>
             ))}

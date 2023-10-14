@@ -13,15 +13,7 @@ import { IEmailValidationResult, IFormattedValidationResult } from './types';
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import * as styles from './EmailValidation.styles';
-import axios from 'axios';
-
-const fetchValidation = async (email: string, onSuccessCallback: (newResult: IEmailValidationResult) => void) => {
-    const baseUrl = 'https://www.disify.com/api/email';
-    const url = `${baseUrl}/${email}`;
-    const result = await axios.get<IEmailValidationResult>(url);
-    onSuccessCallback(result.data);
-    return result.data;
-};
+import { fetchValidation } from './ValidationForm.utils';
 
 export interface IValidationFormProps {
     addQueryResultToHistory: (newResult: IFormattedValidationResult) => void;
